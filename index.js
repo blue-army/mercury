@@ -1,4 +1,5 @@
 var request = require('request');
+require('dotenv').config()
 
 module.exports = function (context, req) {
 

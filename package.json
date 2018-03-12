@@ -1,0 +1,22 @@
+{
+    "name": "mercury",
+    "version": "1.0.0",
+    "description": "delivers messages from various inputs to slack, teams etc..",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/blue-army/mercury.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/blue-army/mercury/issues"
+    },
+    "homepage": "https://github.com/blue-army/mercury#readme",
+    "dependencies": {
+        "request": "^2.85.0"
+    }
+}

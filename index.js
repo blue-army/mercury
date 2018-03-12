@@ -4,6 +4,7 @@ module.exports = function (context, req) {
 
     context.log(req)
 
+    const hook = process.env.SLACK_URL;
     var username = "planck";
     var icon = "https://bluearmy.blob.core.windows.net/slacker-assets/Skull-48.png";
     var requestedBy = req.body.resource.requests[0].requestedFor.displayName;
@@ -16,7 +17,7 @@ module.exports = function (context, req) {
         icon_url: icon,
         attachments: [{
             color: "#36a64f",
-            pretext: "Build",
+            pretext: "<" + link + "|Build>",
             mrkdwn_in:[
                 "pretext"
             ],
@@ -33,26 +34,11 @@ module.exports = function (context, req) {
         }]
     }
 
-    // if (req.query.name || (req.body && req.body.name)) {
-    //     context.res = {
-    //         // status: 200, /* Defaults to 200 */
-    //         body: "Hello " + (req.query.name || req.body.name)
-    //     };
-    // }
-    // else {
-    //     context.res = {
-    //         status: 400,
-    //         body: "Please pass a name on the query string or in the request body"
-    //     };
-    // }
-
-    const url = process.env.SLACK_URL;
-
     // log slack message
     context.log(JSON.stringify(slack))
 
     request.post({
-        url: url,
+        url: hook,
         headers: {
             "Content-Type": "application/json"
         },
@@ -64,5 +50,4 @@ module.exports = function (context, req) {
         context.log(body);
         context.done();
     });
-
 };

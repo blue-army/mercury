@@ -11,7 +11,7 @@ request:
 ```json
 {
    "Method":"POST",
-   "URI":"https://blue-army.azurewebsites.net/api/Slacker?code=hIW89sbvOPr8eidB/N9Z0QBfmQd9q1sRnVcw961Q1sIqm/PLVaNXkA==",
+   "URI":"",
    "HTTP Version":"1.1",
    "Headers":{
       "Content-Type":"application/json; charset=utf-8"
@@ -56,7 +56,7 @@ log:
 
 ```json
 {
-   "originalUrl":"https://blue-army.azurewebsites.net/api/Slacker?code=hIW89sbvOPr8eidB/N9Z0QBfmQd9q1sRnVcw961Q1sIqm/PLVaNXkA==",
+   "originalUrl":"",
    "method":"POST",
    "query":{
       "code":"hIW89sbvOPr8eidB/N9Z0QBfmQd9q1sRnVcw961Q1sIqm/PLVaNXkA=="
@@ -66,8 +66,8 @@ log:
       "expect":"100-continue",
       "host":"blue-army.azurewebsites.net",
       "max-forwards":"10",
-      "x-waws-unencoded-url":"/api/Slacker?code=hIW89sbvOPr8eidB/N9Z0QBfmQd9q1sRnVcw961Q1sIqm/PLVaNXkA==",
-      "x-original-url":"/api/Slacker?code=hIW89sbvOPr8eidB/N9Z0QBfmQd9q1sRnVcw961Q1sIqm/PLVaNXkA==",
+      "x-waws-unencoded-url":"",
+      "x-original-url":"",
       "x-arr-log-id":"13395830-1754-49a5-b655-0523afafc4ce",
       "disguised-host":"blue-army.azurewebsites.net",
       "x-site-deployment-id":"blue-army",
@@ -191,7 +191,7 @@ log:
 
 ```json
 {
-    "originalUrl":"https://blue-army.azurewebsites.net/api/Slacker?code=hIW89sbvOPr8eidB/N9Z0QBfmQd9q1sRnVcw961Q1sIqm/PLVaNXkA==",
+    "originalUrl":"",
     "method":"POST",
     "query":{
         "code":"hIW89sbvOPr8eidB/N9Z0QBfmQd9q1sRnVcw961Q1sIqm/PLVaNXkA=="
@@ -201,8 +201,8 @@ log:
         "expect":"100-continue",
         "host":"blue-army.azurewebsites.net",
         "max-forwards":"10",
-        "x-waws-unencoded-url":"/api/Slacker?code=hIW89sbvOPr8eidB/N9Z0QBfmQd9q1sRnVcw961Q1sIqm/PLVaNXkA==",
-        "x-original-url":"/api/Slacker?code=hIW89sbvOPr8eidB/N9Z0QBfmQd9q1sRnVcw961Q1sIqm/PLVaNXkA==",
+        "x-waws-unencoded-url":"",
+        "x-original-url":"",
         "x-arr-log-id":"d057a6d4-f436-464f-bb21-a8f10c39de8a",
         "disguised-host":"blue-army.azurewebsites.net",
         "x-site-deployment-id":"blue-army",
@@ -299,7 +299,7 @@ log:
 ### properties
 
 name: `planck`
-icon: `https://bluearmy.blob.core.windows.net/slacker-assets/Skull-48.png`
+icon: `resourceurl`
 requested by: `resource.requests.0.requestedFor.displayName
 build: `resource.definition.name`
 link: urlcombine - `resourceContainers.account.baseUrl` + `_permalink/_build/index?collectionId=` + `resourceContainers.collection.id` + `&projectId=` + `resourceContainers.project.id` + `&buildId=` + `resource.id`

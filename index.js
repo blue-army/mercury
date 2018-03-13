@@ -20,8 +20,20 @@ module.exports = function (context, req) {
     var docLink = collLink + '/docs/' + docId;
 
     var colorMap = {};
-    colorMap['stopped'] = "#DAA038";
+    colorMap['stopped'] = '#DAA038';
     colorMap['succeeded'] = '#34A64F';
+    colorMap['failed'] = '#A30300';
+    colorMap['canceled'] = '#666666';
+    colorMap['partiallySucceeded'] = '#DAA038';
+    colorMap['fallback'] = '#4C7AA1';
+
+    var statusMap = {};
+    statusMap['stopped'] = 'has been canceled';
+    statusMap['succeeded'] = 'succeeded';
+    statusMap['failed'] = 'failed';
+    statusMap['canceled'] = 'canceled';
+    statusMap['partiallySucceeded'] = 'partially succeeded';
+    statusMap['fallback'] = 'finished';
 
     client.readDocument(docLink, function (err, doc) {
         if (err) {
@@ -36,19 +48,23 @@ module.exports = function (context, req) {
             var icon = doc.icon;
             var requestedBy = req.body.resource.requests[0].requestedFor.displayName;
             var buildDefinition = req.body.resource.definition.name;
-            var status = req.body.resource.status
+            var buildNumber = req.body.resource.buildNumber;
+            var status = (req.body.resource.status in colorMap) ? req.body.resource.status : 'fallback';
             var link = req.body.resourceContainers.account.baseUrl + "_permalink/_build/index?collectionId=" + req.body.resourceContainers.collection.id + "&projectId=" + req.body.resourceContainers.project.id + "&buildId=" + req.body.resource.id;
+            var color = colorMap[status];
+            var pretext = "Build <" + link + "|" + buildNumber + "> " + statusMap[status];
+            var fallback = "Build " + statusMap[status];
 
             var slack = {
                 username: username,
                 icon_url: icon,
                 attachments: [{
-                    color: "#36a64f",
-                    pretext: "<" + link + "|Build>",
+                    color: color,
+                    pretext: pretext,
                     mrkdwn_in: [
                         "pretext"
                     ],
-                    fallback: "Build",
+                    fallback: fallback,
                     fields: [{
                         title: "Requested by",
                         value: requestedBy,

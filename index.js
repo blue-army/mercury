@@ -21,6 +21,7 @@ module.exports = function (context, req) {
 
     var colorMap = {};
     colorMap['stopped'] = "#DAA038";
+    colorMap['succeeded'] = '#34A64F';
 
     client.readDocument(docLink, function (err, doc) {
         if (err) {

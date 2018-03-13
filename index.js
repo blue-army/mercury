@@ -14,15 +14,17 @@ module.exports = function (context, req) {
 
     context.log(req)
 
+    var docId = req.query.key;
     var dbLink = 'dbs/' + databaseId;
     var collLink = dbLink + '/colls/' + collectionId;
-    var docLink = collLink + '/docs/' + "ollie";
+    var docLink = collLink + '/docs/' + docId;
 
     client.readDocument(docLink, function (err, doc) {
         if (err) {
             context.log(err);
+            context.res = { status: 400, body: { message: 'Invalid key!' } };
+            context.done();
         } else {
-
             context.log(doc);
 
             const hook = doc.slack;

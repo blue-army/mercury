@@ -19,6 +19,9 @@ module.exports = function (context, req) {
     var collLink = dbLink + '/colls/' + collectionId;
     var docLink = collLink + '/docs/' + docId;
 
+    var colorMap = {};
+    colorMap['stopped'] = "#DAA038";
+
     client.readDocument(docLink, function (err, doc) {
         if (err) {
             context.log(err);

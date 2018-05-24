@@ -46,14 +46,23 @@ module.exports = function (context, req) {
             const hook = doc.slack;
             var username = doc.username;
             var icon = doc.icon;
+            var repo = doc.repo;
             var requestedBy = req.body.resource.requests[0].requestedFor.displayName;
+            var userId = req.body.resource.requests[0].requestedFor.uniqueName;
             var buildDefinition = req.body.resource.definition.name;
             var buildNumber = req.body.resource.buildNumber;
             var status = (req.body.resource.status in colorMap) ? req.body.resource.status : 'fallback';
-            var link = req.body.resourceContainers.account.baseUrl + "_permalink/_build/index?collectionId=" + req.body.resourceContainers.collection.id + "&projectId=" + req.body.resourceContainers.project.id + "&buildId=" + req.body.resource.id;
+            var baseUrl = req.body.resourceContainers.account.baseUrl;
+            var projectId = req.body.resourceContainers.project.id;
+            var link = baseUrl + "_permalink/_build/index?collectionId=" + req.body.resourceContainers.collection.id + "&projectId=" + projectId + "&buildId=" + req.body.resource.id;
             var color = colorMap[status];
             var pretext = "Build <" + link + "|" + buildNumber + "> " + statusMap[status];
             var fallback = "Build " + statusMap[status];
+            var sourceParts = req.body.resource.sourceGetVersion.split(':');
+            var ref = sourceParts[1];
+            var commit = sourceParts[2];
+            var commitUrl = baseUrl + projectId + "/_git/" + repo + "/commit/" + commit + "?refName=" + ref;
+            var branchUrl = baseUrl + projectId + "/_git/" + repo + "?refName=" + ref + "&_a=history";
 
             var slack = {
                 username: username,
@@ -73,6 +82,17 @@ module.exports = function (context, req) {
                         title: "Build Definition",
                         value: buildDefinition,
                         short: true
+                    }],
+                    actions: [{
+                        type: "button",
+                        text: ref.slice("refs/heads/".length),
+                        url: branchUrl,
+                        style: "primary",
+                    }, {
+                        type: "button",
+                        text: commit.slice(0, 7),
+                        url: commitUrl,
+                        style: "primary",
                     }]
                 }]
             }

@@ -64,7 +64,7 @@ module.exports = function (context, req) {
             var pretext = statusMap[status] + ": " + buildLink + " - " + requestedBy.toLowerCase();
             var fallback = statusMap[status] + ": " + branch + " - " + requestedBy.toLowerCase();
             var commitUrl = baseUrl + projectId + "/_git/" + repo + "/commit/" + commit + "?refName=" + ref;
-            var branchUrl = baseUrl + projectId + "/_git/" + repo + "?refName=" + ref + "&_a=history";
+            var branchUrl = baseUrl + projectId + "/_git/" + repo + "?version=GB" + branch + "&_a=history";
 
             var slack = {
                 username: username,

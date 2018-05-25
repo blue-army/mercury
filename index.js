@@ -86,13 +86,11 @@ module.exports = function (context, req) {
                     actions: [{
                         type: "button",
                         text: ref.slice("refs/heads/".length),
-                        url: branchUrl,
-                        style: "primary",
+                        url: branchUrl
                     }, {
                         type: "button",
                         text: commit.slice(0, 7),
-                        url: commitUrl,
-                        style: "primary",
+                        url: commitUrl
                     }]
                 }]
             }

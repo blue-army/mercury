@@ -28,12 +28,12 @@ module.exports = function (context, req) {
     colorMap['fallback'] = '#4C7AA1';
 
     var statusMap = {};
-    statusMap['stopped'] = 'has been canceled';
-    statusMap['succeeded'] = 'succeeded';
-    statusMap['failed'] = 'failed';
-    statusMap['canceled'] = 'canceled';
-    statusMap['partiallySucceeded'] = 'partially succeeded';
-    statusMap['fallback'] = 'finished';
+    statusMap['stopped'] = 'Canceled';
+    statusMap['succeeded'] = 'Succeeded';
+    statusMap['failed'] = 'Failed';
+    statusMap['canceled'] = 'Canceled';
+    statusMap['partiallySucceeded'] = 'Partially Succeeded';
+    statusMap['fallback'] = 'Finished';
 
     client.readDocument(docLink, function (err, doc) {
         if (err) {
@@ -54,13 +54,15 @@ module.exports = function (context, req) {
             var status = (req.body.resource.status in colorMap) ? req.body.resource.status : 'fallback';
             var baseUrl = req.body.resourceContainers.account.baseUrl;
             var projectId = req.body.resourceContainers.project.id;
-            var link = baseUrl + "_permalink/_build/index?collectionId=" + req.body.resourceContainers.collection.id + "&projectId=" + projectId + "&buildId=" + req.body.resource.id;
+            var buildUrl = baseUrl + "_permalink/_build/index?collectionId=" + req.body.resourceContainers.collection.id + "&projectId=" + projectId + "&buildId=" + req.body.resource.id;
             var color = colorMap[status];
-            var pretext = "Build <" + link + "|" + buildNumber + "> " + statusMap[status];
-            var fallback = "Build " + statusMap[status];
             var sourceParts = req.body.resource.sourceGetVersion.split(':');
             var ref = sourceParts[1];
+            var branch = ref.slice("refs/heads/".length);
             var commit = sourceParts[2];
+            var buildLink = "<" + buildUrl + "|" + buildNumber + ">";
+            var pretext = statusMap[status] + ": " + buildLink + " - " + requestedBy;
+            var fallback = statusMap[status] + ": " + branch + " - " + requestedBy;
             var commitUrl = baseUrl + projectId + "/_git/" + repo + "/commit/" + commit + "?refName=" + ref;
             var branchUrl = baseUrl + projectId + "/_git/" + repo + "?refName=" + ref + "&_a=history";
 
@@ -74,18 +76,10 @@ module.exports = function (context, req) {
                         "pretext"
                     ],
                     fallback: fallback,
-                    fields: [{
-                        title: "Requested by",
-                        value: requestedBy,
-                        short: true
-                    }, {
-                        title: "Build Definition",
-                        value: buildDefinition,
-                        short: true
-                    }],
+                    fields: [],
                     actions: [{
                         type: "button",
-                        text: ref.slice("refs/heads/".length),
+                        text: branch,
                         url: branchUrl
                     }, {
                         type: "button",

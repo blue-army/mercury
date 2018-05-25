@@ -28,12 +28,12 @@ module.exports = function (context, req) {
     colorMap['fallback'] = '#4C7AA1';
 
     var statusMap = {};
-    statusMap['stopped'] = 'Canceled';
-    statusMap['succeeded'] = 'Succeeded';
-    statusMap['failed'] = 'Failed';
-    statusMap['canceled'] = 'Canceled';
-    statusMap['partiallySucceeded'] = 'Partially Succeeded';
-    statusMap['fallback'] = 'Finished';
+    statusMap['stopped'] = 'canceled';
+    statusMap['succeeded'] = 'succeeded';
+    statusMap['failed'] = 'failed';
+    statusMap['canceled'] = 'canceled';
+    statusMap['partiallySucceeded'] = 'partially succeeded';
+    statusMap['fallback'] = 'finished';
 
     client.readDocument(docLink, function (err, doc) {
         if (err) {
@@ -61,8 +61,8 @@ module.exports = function (context, req) {
             var branch = ref.slice("refs/heads/".length);
             var commit = sourceParts[2];
             var buildLink = "<" + buildUrl + "|" + buildNumber + ">";
-            var pretext = statusMap[status] + ": " + buildLink + " - " + requestedBy;
-            var fallback = statusMap[status] + ": " + branch + " - " + requestedBy;
+            var pretext = statusMap[status] + ": " + buildLink + " - " + requestedBy.toLowerCase();
+            var fallback = statusMap[status] + ": " + branch + " - " + requestedBy.toLowerCase();
             var commitUrl = baseUrl + projectId + "/_git/" + repo + "/commit/" + commit + "?refName=" + ref;
             var branchUrl = baseUrl + projectId + "/_git/" + repo + "?refName=" + ref + "&_a=history";
 

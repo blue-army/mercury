@@ -47,6 +47,7 @@ module.exports = function (context, req) {
             var username = doc.username;
             var icon = doc.icon;
             var repo = doc.repo;
+            var channel = doc.channel;
             var requestedBy = req.body.resource.requests[0].requestedFor.displayName;
             var userId = req.body.resource.requests[0].requestedFor.uniqueName;
             var buildDefinition = req.body.resource.definition.name;
@@ -67,6 +68,7 @@ module.exports = function (context, req) {
             var branchUrl = baseUrl + projectId + "/_git/" + repo + "?version=GB" + branch + "&_a=history";
 
             var slack = {
+                channel: channel,
                 username: username,
                 icon_url: icon,
                 attachments: [{

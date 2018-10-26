@@ -43,69 +43,94 @@ module.exports = function (context, req) {
         } else {
             context.log(doc);
 
-            const hook = doc.slack;
-            var username = doc.username;
-            var icon = doc.icon;
-            var repo = doc.repo;
-            var channel = doc.channel;
-            var requestedBy = req.body.resource.requests[0].requestedFor.displayName;
-            var userId = req.body.resource.requests[0].requestedFor.uniqueName;
-            var buildDefinition = req.body.resource.definition.name;
-            var buildNumber = req.body.resource.buildNumber;
-            var status = (req.body.resource.status in colorMap) ? req.body.resource.status : 'fallback';
-            var baseUrl = req.body.resourceContainers.account.baseUrl;
-            var projectId = req.body.resourceContainers.project.id;
-            var buildUrl = baseUrl + "_permalink/_build/index?collectionId=" + req.body.resourceContainers.collection.id + "&projectId=" + projectId + "&buildId=" + req.body.resource.id;
-            var color = colorMap[status];
-            var sourceParts = req.body.resource.sourceGetVersion.split(':');
-            var ref = sourceParts[1];
-            var branch = ref.slice("refs/heads/".length);
-            var commit = sourceParts[2];
-            var buildLink = "<" + buildUrl + "|" + buildNumber + ">";
-            var pretext = statusMap[status] + ": " + buildLink + " - " + requestedBy.toLowerCase();
-            var fallback = statusMap[status] + ": " + branch + " - " + requestedBy.toLowerCase();
-            var commitUrl = baseUrl + projectId + "/_git/" + repo + "/commit/" + commit + "?refName=" + ref;
-            var branchUrl = baseUrl + projectId + "/_git/" + repo + "?version=GB" + branch + "&_a=history";
+            // read team document
+            var requestedBy = req.body.resource.requests[0].requestedFor.displayName.toLowerCase();
+            var team = doc.team;
+            var teamDocLink = collLink + '/docs/' + team;
+            client.readDocument(teamDocLink, function (err, teamDoc) {
+                if (err) {
+                    context.log(err);
+                    context.res = { status: 400, body: { message: 'Invalid team!' } };
+                    context.done();
+                    return;
+                }
 
-            var slack = {
-                channel: channel,
-                username: username,
-                icon_url: icon,
-                attachments: [{
-                    color: color,
-                    pretext: pretext,
-                    mrkdwn_in: [
-                        "pretext"
-                    ],
-                    fallback: fallback,
-                    fields: [],
-                    actions: [{
-                        type: "button",
-                        text: branch,
-                        url: branchUrl
-                    }, {
-                        type: "button",
-                        text: commit.slice(0, 7),
-                        url: commitUrl
+                // find user id
+                var user = teamDoc.members.find(function(member) {
+                    return (member.name === requestedBy);
+                });
+
+                var userId = requestedBy
+                if (user) {
+                    userId = "<@" + user.id + ">";
+                }
+
+                context.log("user id: " + userId);
+
+                const hook = doc.slack;
+                var username = doc.username;
+                var icon = doc.icon;
+                var repo = doc.repo;
+                var channel = doc.channel;
+                
+                // var userId = req.body.resource.requests[0].requestedFor.uniqueName;
+                var buildDefinition = req.body.resource.definition.name;
+                var buildNumber = req.body.resource.buildNumber;
+                var status = (req.body.resource.status in colorMap) ? req.body.resource.status : 'fallback';
+                var baseUrl = req.body.resourceContainers.account.baseUrl;
+                var projectId = req.body.resourceContainers.project.id;
+                var buildUrl = baseUrl + "_permalink/_build/index?collectionId=" + req.body.resourceContainers.collection.id + "&projectId=" + projectId + "&buildId=" + req.body.resource.id;
+                var color = colorMap[status];
+                var sourceParts = req.body.resource.sourceGetVersion.split(':');
+                var ref = sourceParts[1];
+                var branch = ref.slice("refs/heads/".length);
+                var commit = sourceParts[2];
+                var buildLink = "<" + buildUrl + "|" + buildNumber + ">";
+                var pretext = statusMap[status] + ": " + buildLink + " - " + userId;
+                var fallback = statusMap[status] + ": " + branch + " - " + userId;
+                var commitUrl = baseUrl + projectId + "/_git/" + repo + "/commit/" + commit + "?refName=" + ref;
+                var branchUrl = baseUrl + projectId + "/_git/" + repo + "?version=GB" + branch + "&_a=history";
+
+                var slack = {
+                    channel: channel,
+                    username: username,
+                    icon_url: icon,
+                    attachments: [{
+                        color: color,
+                        pretext: pretext,
+                        mrkdwn_in: [
+                            "pretext"
+                        ],
+                        fallback: fallback,
+                        fields: [],
+                        actions: [{
+                            type: "button",
+                            text: branch,
+                            url: branchUrl
+                        }, {
+                            type: "button",
+                            text: commit.slice(0, 7),
+                            url: commitUrl
+                        }]
                     }]
-                }]
-            }
+                }
 
-            // log slack message
-            context.log(JSON.stringify(slack))
+                // log slack message
+                context.log(JSON.stringify(slack))
 
-            request.post({
-                url: hook,
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: slack,
-                json: true
-            }, function (error, response, body) {
-                context.log(error);
-                context.log(JSON.stringify(response));
-                context.log(body);
-                context.done();
+                request.post({
+                    url: hook,
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: slack,
+                    json: true
+                }, function (error, response, body) {
+                    context.log(error);
+                    context.log(JSON.stringify(response));
+                    context.log(body);
+                    context.done();
+                });
             });
         }
     });

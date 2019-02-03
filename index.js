@@ -13,9 +13,16 @@ var client = new DocumentDBClient(host, { masterKey: key });
 
 module.exports = function (context, req) {
 
-    // context.log(req);
+    context.log(req);
 
     var docId = req.query.key;
+
+    if (docId == 'ping') {
+        context.res = { status: 200, body: { message: 'pong!' } };
+        context.done();
+        return;
+    }
+
     var dbLink = 'dbs/' + databaseId;
     var collLink = dbLink + '/colls/' + collectionId;
     var docLink = collLink + '/docs/' + docId;

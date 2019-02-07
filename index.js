@@ -18,7 +18,15 @@ module.exports = function (context, req) {
     var docId = req.query.key;
 
     if (docId == 'ping') {
+        context.log("ping");
         context.res = { status: 200, body: { message: 'pong!' } };
+        context.done();
+        return;
+    }
+
+    if (docId == 'noop') {
+        context.log("noop");
+        context.res = { status: 200, body: { message: 'noop!' } };
         context.done();
         return;
     }
@@ -51,8 +59,15 @@ module.exports = function (context, req) {
         } else {
             context.log(doc);
 
+            // requestedFor is null for scheduled builds
+            var requestedBy = req.body.resource.requests[0].requestedFor.displayName;
+            if (requestedBy) {
+                requestedBy = requestedBy.toLowerCase();
+            } else {
+                requestedBy = '`scheduled`'
+            }
+
             // read team document
-            var requestedBy = req.body.resource.requests[0].requestedFor.displayName.toLowerCase();
             var team = doc.team;
             var teamDocLink = collLink + '/docs/' + team;
             client.readDocument(teamDocLink, function (err, teamDoc) {
@@ -116,52 +131,53 @@ module.exports = function (context, req) {
                         "Authorization": "Basic " + vstsAuth
                     },
                 }, function (error, response, body) {
-                    if (error) {
-                        context.log("commit info (error): " + error);
-                        context.res = { status: 400, body: { message: 'Error retrieving commit details!' } };
-                        context.done();
-                        return;
-                    }
-
-                    // log
-                    context.log("commit info (response): " + JSON.stringify(response));
-                    context.log("commit info (body): " + body);
 
                     var details = "";
-                    if (response.statusCode !== 404) {
 
-                        // process commit comment
-                        var commitInfo = JSON.parse(body);
-                        var comment = commitInfo.comment;
-                        context.log("commit comment: " + comment);
+                    if (error) {
+                        context.log("commit info (error): " + error);
+                        // context.res = { status: 400, body: { message: 'Error retrieving commit details!' } };
+                        // context.done();
+                        // return;
+                    } else {
+                        context.log("commit info (response): " + JSON.stringify(response));
+                        context.log("commit info (body): " + body);
 
-                        var lines = comment.split('\n').filter(Boolean);
+                        if (response.statusCode !== 404) {
 
-                        var msg = lines[0];
-                        for (i = 1; i < lines.length; i++) {
-                            var piece = lines[i];
+                            // process commit comment
+                            var commitInfo = JSON.parse(body);
+                            var comment = commitInfo.comment;
+                            context.log("commit comment: " + comment);
 
-                            // check for key:user
-                            var parts = piece.split(':');
-                            if (parts.length == 2) {
-                                
-                                // find user id
-                                var p = teamDoc.members.find(function(member) {
-                                    return (member.email === parts[1].toLowerCase());
-                                });
+                            var lines = comment.split('\n').filter(Boolean);
 
-                                piece = parts[0] + ": "
-                                if (p) {
-                                    piece = piece + "<@" + p.id + ">";
-                                } else {
-                                    piece = piece + parts[1];
+                            var msg = lines[0];
+                            for (i = 1; i < lines.length; i++) {
+                                var piece = lines[i];
+
+                                // check for key:user
+                                var parts = piece.split(':');
+                                if (parts.length == 2) {
+                                    
+                                    // find user id
+                                    var p = teamDoc.members.find(function(member) {
+                                        return (member.email === parts[1].toLowerCase());
+                                    });
+
+                                    piece = parts[0] + ": "
+                                    if (p) {
+                                        piece = piece + "<@" + p.id + ">";
+                                    } else {
+                                        piece = piece + parts[1];
+                                    }
                                 }
+
+                                msg += "\n" + piece;
                             }
 
-                            msg += "\n" + piece;
+                            details = "\n" + "```" + msg + "```"
                         }
-
-                        details = "\n" + "```" + msg + "```"
                     }
 
                     var slack = {

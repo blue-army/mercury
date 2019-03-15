@@ -6,6 +6,7 @@ var validChangeTypes = ['chore', 'hack', 'doc', 'wiki', 'test', 'fix', 'perf',
     'build', 'refactor', 'style', 'feat' ];
 
 function validate(context, title) {
+
     var result = {
         valid: false,
         msg: 'invalid commit msg!'
@@ -69,7 +70,7 @@ module.exports = function (context, req) {
     var statusObj = {
         "state": result.valid ? "succeeded" : "failed",
         "description": result.msg,
-        "targetUrl": "google.com",
+        "targetUrl": "https://slb1-swt.visualstudio.com/planck/_wiki/wikis/Developer.wiki?wikiVersion=GBmaster&pagePath=%2Fhow%20to%20articles%2Fmonorepo%20development%20guidelines&pageId=943",
         "context": {
             "name": "commit-msg",
             "genre": "info"

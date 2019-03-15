@@ -70,7 +70,7 @@ module.exports = function (context, req) {
     var statusObj = {
         "state": result.valid ? "succeeded" : "failed",
         "description": result.msg,
-        "targetUrl": "https://slb1-swt.visualstudio.com/planck/_wiki/wikis/Developer.wiki?wikiVersion=GBmaster&pagePath=%2Fhow%20to%20articles%2Fmonorepo%20development%20guidelines&pageId=943",
+        "targetUrl": "google.com",
         "context": {
             "name": "commit-msg",
             "genre": "info"

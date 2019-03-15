@@ -13,7 +13,7 @@ var client = new DocumentDBClient(host, { masterKey: key });
 
 module.exports = function (context, req) {
 
-    context.log(req);
+    // context.log(req);
 
     var docId = req.query.key;
 

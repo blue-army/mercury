@@ -3,7 +3,7 @@ var request = require('request');
 var vstsAuth = process.env.VSTS_STATUS_AUTH;
 
 var validChangeTypes = ['chore', 'hack', 'doc', 'wiki', 'test', 'fix', 'perf', 
-    'build', 'refactor', 'style', 'feat' ];
+    'build', 'refactor', 'style', 'feat', 'security', 'tools' ];
 
 function validate(context, title) {
 

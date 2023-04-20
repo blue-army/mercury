@@ -19,6 +19,6 @@
     "dependencies": {
         "documentdb": "^1.14.2",
         "dotenv": "^5.0.1",
-        "request": "^2.85.0"
+        "request": "^2.88.2"
     }
 }
